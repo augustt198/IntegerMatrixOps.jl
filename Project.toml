@@ -1,0 +1,8 @@
+name = "IntegerMatrixOps"
+uuid = "8ef5b14e-9811-4735-aa7a-23f0bbb7568c"
+authors = ["August"]
+version = "0.1.0"
+
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
