@@ -30,11 +30,14 @@ function build_W(mods)::Matrix{Float64} # fix this shit
 end
 
 const PRECOMP_PRIMES = begin
-    _max = Int64(sqrt(1/eps(Float64)))
-    accumulate((p, _) -> prevprime(p - 1), 1:128, init=_max)
+    local max = Int64(sqrt(1/eps(Float64)))
+    accumulate((p, _) -> prevprime(p - 1), 1:128, init=max)
 end
 
-const LOG_SUM_PRECOMP_PRIMES = accumulate(+, log2.(PRECOMP_PRIMES))
+const PRECOMP_LOG_SUM_PRIMES = begin
+    local lgs = log2.(PRECOMP_PRIMES)
+    cumsum!(lgs, lgs)
+end
 const PRECOMP_W = build_W(PRECOMP_PRIMES)
 
 function build_lagrange(Ps)
@@ -116,7 +119,7 @@ function modsfor(lg_bd)
     while logsum < lg_bd
         n += 1
         if n <= length(PRECOMP_PRIMES)
-            logsum = LOG_SUM_PRECOMP_PRIMES[n]
+            logsum = PRECOMP_LOG_SUM_PRIMES[n]
         else
             if n == length(PRECOMP_PRIMES) + 1
                 primes = copy(PRECOMP_PRIMES)
@@ -354,7 +357,8 @@ end
 
 function detsign(AI::AbstractMatrix{T}) where {T <: Integer}
     LinearAlgebra.checksquare(AI)
-    size(AI) == 1 && return sign(AI[1])
+    length(AI) == 0 && return 1
+    length(AI) == 1 && return sign(AI[1])
 
     bds = bounds(AI)
 
@@ -375,7 +379,8 @@ end
 
 function detbig(AI::AbstractMatrix{T}) where {T <: Integer}
     LinearAlgebra.checksquare(AI)
-    size(AI) == 1 && return big(AI[1])
+    length(AI) == 0 && return big(1)
+    length(AI) == 1 && return big(AI[1])
 
     bds = bounds(AI)
 
@@ -399,6 +404,7 @@ end
 
 function permbig(AI::AbstractMatrix{T}) where {T <: Integer}
     LinearAlgebra.checksquare(AI)
+    length(AI) == 1 && return big(AI[1])
 
     bds = bounds(AI)
     n, mods, _ = modsfor(bds[:lg_perm] + 1)
