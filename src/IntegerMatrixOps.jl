@@ -325,8 +325,7 @@ end
 
 function try_bareiss(A, bounds)
     if bounds[:lg_bareiss] < log2(typemax(Int))
-        A_Int = eltype(A) == Int ? A : Int.(A)
-        return LinearAlgebra.det_bareiss!(A_Int)
+        return LinearAlgebra.det_bareiss!(Int.(A))
     else
         return nothing
     end
