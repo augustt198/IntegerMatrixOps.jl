@@ -354,7 +354,7 @@ function crt(residuals, mods)
     return d
 end
 
-function detsign(AI::AbstractMatrix{T}) where {T <: Integer}
+function detsign(AI::AbstractMatrix{T})::Int where {T <: Integer}
     LinearAlgebra.checksquare(AI)
     length(AI) == 0 && return 1
     length(AI) == 1 && return sign(AI[1])
@@ -373,7 +373,7 @@ function detsign(AI::AbstractMatrix{T}) where {T <: Integer}
     rs = det_residuals((@view mods[1:n]), AI, bds[:max])
     
     S = compsign((@view mods[1:n]), rs, W)
-    return Int(sign(S))
+    return sign(S)
 end
 
 function detbig(AI::AbstractMatrix{T}) where {T <: Integer}
