@@ -17,7 +17,7 @@ macro modops(m)
         @inline *ₘ(x, y) = fmod(x * y, $m)
         @inline invₘ(x)  = fmodinv(x, $m)
         @inline /ₘ(x, y) = x *ₘ invₘ(y)
-        @inline det2ₘ(a, b, c, d) = fmod(muladd(a, d, -b*c), $m)
+        @inline det2ₘ(a, b, c, d) = fmod(muladd(-b, c, a*d), $m)
     end)
 end
 
@@ -250,23 +250,14 @@ end
         a14, a24, a34, a44 = A[1, 4], A[2, 4], A[3, 4], A[4, 4]
     end
 
-    m24 = det2ₘ(a32, a34, a42, a44)
-    m34 = det2ₘ(a33, a34, a43, a44)
-    m23 = det2ₘ(a32, a33, a42, a43)
-    m14 = det2ₘ(a31, a34, a41, a44)
-    m13 = det2ₘ(a31, a33, a41, a43)
-    m12 = det2ₘ(a31, a32, a41, a42)
+    m1 = det2ₘ(a11, a12, a21, a22) *ₘ det2ₘ(a33, a34, a43, a44)
+    m2 = det2ₘ(a11, a13, a21, a23) *ₘ det2ₘ(a32, a34, a42, a44)
+    m3 = det2ₘ(a11, a14, a21, a24) *ₘ det2ₘ(a32, a33, a42, a43)
+    m4 = det2ₘ(a12, a13, a22, a23) *ₘ det2ₘ(a31, a34, a41, a44)
+    m5 = det2ₘ(a12, a14, a22, a24) *ₘ det2ₘ(a31, a33, a41, a43)
+    m6 = det2ₘ(a13, a14, a23, a24) *ₘ det2ₘ(a31, a32, a41, a42)
 
-    d1 = det2ₘ(a22, a23, m24, m34)
-    d1 = det2ₘ(a24, -1, d1, m23)
-    d2 = det2ₘ(a21, a23, m14, m34)
-    d2 = det2ₘ(a24, -1, d2, m13)
-    d3 = det2ₘ(a21, a22, m14, m24)
-    d3 = det2ₘ(a24, -1, d3, m12)
-    d4 = det2ₘ(a21, a22, m13, m23)
-    d4 = det2ₘ(a23, -1, d4, m12)
-
-    D = det2ₘ(a11, a12, d2, d1) +ₘ det2ₘ(a13, a14, d4, d3)
+    D = (m1 +ₘ m3) +ₘ (m4 + m6) -ₘ (m2 +ₘ m5)
     return D
 end
 
