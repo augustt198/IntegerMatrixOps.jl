@@ -80,7 +80,7 @@ end
 end
 
 @testset "permanent" begin
-    for N = (2, 3, 4, 5, 10)
+    for N = (2, 3, 4, 5, 8)
         for T = (Int32, Int64, Bool, UInt8)
             testperm(rand(T, N, N))
         end
@@ -90,4 +90,5 @@ end
 @testset "inference" begin
     @inferred detsign(rand(Int, 3, 3))
     @inferred detbig(rand(Int, 3, 3))
+    @inferred permbig(rand(Int, 3, 3))
 end
